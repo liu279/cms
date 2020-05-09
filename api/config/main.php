@@ -12,7 +12,8 @@ return [
     'controllerNamespace' => 'api\controllers',
     'components' => [
         'user' => [
-            'class' => yii\web\User::className(),
+            'class' => 'common\components\User',
+//            'class' => yii\web\User::className(),
             'identityClass' => api\models\User::className(),
             'enableSession' => false,
         ],
@@ -49,7 +50,7 @@ return [
         ],
         'urlManager' => [
             'enablePrettyUrl' => true,
-            'enableStrictParsing' => true,
+//            'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
                 '' => 'site/index',
@@ -86,6 +87,19 @@ return [
                 'class' => api\behaviors\ResponseFormatBehavior::className(),
                 'defaultResponseFormat' => yii\web\Response::FORMAT_JSON
             ]
+        ],
+        'i18n' => [
+            'translations' => [
+                'app*' => [
+                    'class' => 'yii\i18n\PhpMessageSource', //使用php文件保存信息
+                    'basePath' => '@app/messages', //php文件保存位置
+                    'sourceLanguage' => 'en-US',
+                    'fileMap' => [
+                        'app' => 'app.php',
+                        'app/error' => 'error.php',
+                    ],
+                ],
+            ],
         ],
     ],
     'modules' => [

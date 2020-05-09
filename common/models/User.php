@@ -24,8 +24,30 @@ use yii\web\UploadedFile;
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $email
+ * @property string $mobile
+ * @property string $age
+ * @property string $birthday
+ * @property string $height
+ * @property string $weight
+ * @property string $shoeSize
+ * @property string $bwh
+ * @property string $nationality
+ * @property string $nation
+ * @property string $native
+ * @property string $living
+ * @property string $graduation
+ * @property string $interest
+ * @property string $idNum
+ * @property string $idImage
+ * @property string $realName
+ * @property string $device_token
  * @property string $auth_key
  * @property string $avatar
+ * @property string $cover
+ * @property integer $sex
+ * @property integer $autonym
+ * @property integer $fire
+ * @property integer $device_type
  * @property integer $status
  * @property integer $created_at
  * @property integer $updated_at
@@ -36,6 +58,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
+    const AUTONYM_NO_ACTIVE = 0;
+    const AUTONYM_ACTIVE = 1;
 
     public $password;
 
@@ -62,14 +86,28 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'password', 'repassword'], 'string'],
+            [['sex','fire','device_type'], 'integer'],
+            [['username','email', 'password', 'mobile', 'age','birthday','height','weight','shoeSize',
+                'bwh','nationality','nation','native','living','graduation','interest','idNum',
+                'idImage','realName','device_token'], 'string'],
+            ['autonym', 'default', 'value' => self::AUTONYM_NO_ACTIVE],
             [['avatar'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif, webp'],
-            [['username', 'email'], 'unique'],
-            ['email', 'email'],
-            [['repassword'], 'compare', 'compareAttribute' => 'password'],
+            [['cover'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, gif, webp'],
+            [['username', 'mobile'], 'unique'],
             [['status'], 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
-            [['username', 'email', 'password', 'repassword'], 'required', 'on' => ['create']],
-            [['username', 'email'], 'required', 'on' => ['update']],
+            [['autonym'], 'in', 'range' => [self::AUTONYM_NO_ACTIVE, self::AUTONYM_ACTIVE]],
+            [['realName', 'idNum'], 'required', 'on' => ['verify']],
+//            [['username', 'email'], 'required', 'on' => ['update']],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function scenarios()
+    {
+        return [
+            'verify' => ['realName', 'idNum'],
         ];
     }
 
@@ -167,6 +205,17 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public static function findByUsername($username)
     {
         return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+    }
+
+    /**
+     * Finds user by mobile
+     *
+     * @param string $mobile
+     * @return static|null
+     */
+    public static function findByMobile($mobile)
+    {
+        return static::findOne(['mobile' => $mobile, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**

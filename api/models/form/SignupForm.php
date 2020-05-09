@@ -9,38 +9,26 @@
 namespace api\models\form;
 
 use Yii;
-use common\models\User;
+use api\models\User;
+use common\components\Common;
 
 class SignupForm extends \yii\base\Model
 {
-    public $username;
-
-    public $email;
+    public $mobile;
 
     public $password;
 
     public function rules()
     {
         return [
-            ['username', 'filter', 'filter' => 'trim'],
-            ['username', 'required'],
+            ['mobile', 'filter', 'filter' => 'trim'],
+            ['mobile', 'required'],
+            ['mobile', 'string', 'max' => 255],
             [
-                'username',
+                'mobile',
                 'unique',
                 'targetClass' => User::className(),
-                'message' => Yii::t('app', 'This username has already been taken')
-            ],
-            ['username', 'string', 'min' => 2, 'max' => 255],
-
-            ['email', 'filter', 'filter' => 'trim'],
-            ['email', 'required'],
-            ['email', 'email'],
-            ['email', 'string', 'max' => 255],
-            [
-                'email',
-                'unique',
-                'targetClass' => User::className(),
-                'message' => Yii::t('app', 'This email address has already been taken')
+                'message' => Yii::t('app', 'This mobile has already been taken')
             ],
 
             ['password', 'required'],
@@ -64,11 +52,11 @@ class SignupForm extends \yii\base\Model
         }
 
         $user = new User();
-        $user->username = $this->username;
-        $user->email = $this->email;
+        $user->username = '游客'.Common::generate_username();
+        $user->mobile = $this->mobile;
         $user->setPassword($this->password);
         $user->generateAuthKey();
-
+        $user->generateAccessToken();
         return $user->save() ? $user : null;
     }
 }

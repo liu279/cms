@@ -14,7 +14,7 @@ use api\models\User;
      */
 class LoginForm extends \yii\base\Model
 {
-    public $username;
+    public $mobile;
     public $password;
 
     /** @var User */
@@ -24,7 +24,7 @@ class LoginForm extends \yii\base\Model
     public function rules()
     {
         return [
-            [['username', 'password'], 'required'],
+            [['mobile', 'password'], 'required'],
             ['password', 'validatePassword'],
         ];
     }
@@ -35,7 +35,7 @@ class LoginForm extends \yii\base\Model
         if (!$this->hasErrors()) {
             $this->_user = $this->getUser();
             if (!$this->_user) {
-                $this->addError($attribute, '用户名不存在');
+                $this->addError($attribute, '手机号不存在');
                 return false;
             }
             if( !$this->_user->validatePassword($this->password) ){
@@ -48,7 +48,7 @@ class LoginForm extends \yii\base\Model
     public function attributeLabels()
     {
         return [
-            'username' => '用户名',
+            'mobile' => '手机号',
             'password' => '密码',
         ];
     }
@@ -70,7 +70,7 @@ class LoginForm extends \yii\base\Model
     protected function getUser()
     {
         if ($this->_user === null) {
-            $this->_user = User::findByUsername($this->username);
+            $this->_user = User::findByMobile($this->mobile);
         }
 
         return $this->_user;

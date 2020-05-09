@@ -53,6 +53,7 @@ return [
     ' Comments' => '评论',
     'This username has already been taken' => '用户名已经被使用了',
     'This email address has already been taken' => '邮箱已经被使用了',
+    'This mobile has already been taken' => '手机号已经被使用了',
     'Please fill out the following fields to signup' => '请填写下面信息完成注册',
     'Signup' => '注册',
     "None category named {name}" => '未找到分类{name}',

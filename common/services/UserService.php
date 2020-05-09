@@ -9,8 +9,12 @@
 namespace common\services;
 
 
+use api\models\form\LoginForm;
+use api\models\form\SignupForm;
 use backend\models\search\UserSearch;
+use common\components\Common;
 use common\models\User;
+use yii\web\IdentityInterface;
 
 class UserService extends Service implements UserServiceInterface
 {
@@ -64,4 +68,48 @@ class UserService extends Service implements UserServiceInterface
         }
         return $model->count('id');
     }
+
+    public function Login($post) {
+        $loginForm = new LoginForm();
+        $loginForm->setAttributes( $post );
+
+        if ($user = $loginForm->login()) {
+            if ($user instanceof IdentityInterface) {
+                return Common::output([
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'avatar' => $user->avatar,
+                    'autonym' => $user->autonym,
+                    'accessToken' => $user->access_token,
+                    'expiredAt' => \Yii::$app->params['user.apiTokenExpire'] + time()
+                ]);
+            } else {
+                $err = $user->errors;
+                return Common::error(203, reset($err)[0]);
+            }
+        } else {
+            $err = $loginForm->errors;
+            return Common::error(203, reset($err)[0]);
+        }
+    }
+
+    public function Register($post) {
+        $signupForm = new SignupForm();
+        $signupForm->setAttributes( $post );
+        if( ($user = $signupForm->signup()) instanceof \common\models\User){
+            return Common::output([
+                'id' => $user->id,
+                'username' => $user->username,
+                'avatar' => $user->avatar,
+                'autonym' => $user->autonym,
+                'accessToken' => $user->access_token,
+                'expiredAt' => \Yii::$app->params['user.apiTokenExpire'] + time()
+            ]);
+        }else{
+            $err = $signupForm->errors;
+            return Common::error(203, reset($err)[0]);
+        }
+    }
+
+
 }
